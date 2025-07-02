@@ -1,0 +1,509 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "",
+    "version": "1.0.0",
+    "description": "API"
+  },
+  "paths": {
+    "/test": {
+      "post": {
+        "summary": "Сохраняем или обновляем test",
+        "description": "Сохраняем test в сервисе",
+        "tags": [
+          "test"
+        ],
+        "operationId": "postTest",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestPost"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ApiVisitorId"
+          },
+          {
+            "$ref": "#/components/parameters/ApiOperationId"
+          }
+        ],
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "200": {
+            "$ref": "#/components/responses/OK"
+          }
+        }
+      },
+      "get": {
+        "summary": "Получить test",
+        "description": "Получаем список test",
+        "tags": [
+          "test"
+        ],
+        "operationId": "getTest",
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "200": {
+            "$ref": "#/components/responses/IndexTest"
+          }
+        }
+      }
+    },
+    "/test/list": {
+      "get": {
+        "summary": "Получить test",
+        "description": "Получаем список test с возможностью их фильтрации",
+        "tags": [
+          "test"
+        ],
+        "operationId": "getTestList",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Часть имени по которому идет фильтрация",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "Id пользователя",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Количество элементов на странице",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "example": 10
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Номер страницы",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 3
+            }
+          }
+        ],
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "200": {
+            "$ref": "#/components/responses/ListTest"
+          }
+        }
+      }
+    },
+    "/test/{id}": {
+      "get": {
+        "summary": "Получить test",
+        "description": "Получаем test по id",
+        "tags": [
+          "test"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "UUID",
+              "example": "456ed3bc-bc67-11eb-bf6f-0242c0a8641e"
+            }
+          }
+        ],
+        "operationId": "getTestId",
+        "responses": {
+          "422": {
+            "$ref": "#/components/responses/UnprocessableEntity"
+          },
+          "200": {
+            "$ref": "#/components/responses/ItemTest"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FormFieldErrors": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "example": "Human-readable error description with a dot."
+        }
+      },
+      "ListItem": {
+        "properties": {
+          "id": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "properties": {
+                    "test": {
+                      "type": "string",
+                      "example": "test"
+                    }
+                  },
+                  "required": [
+                    "test"
+                  ]
+                },
+                {
+                  "properties": {
+                    "qwerty": {
+                      "type": "string",
+                      "example": "qwerty"
+                    }
+                  },
+                  "required": [
+                    "qwerty"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "TestPost": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "UUID",
+            "example": "42aada1a-d4f5-42b3-a9ba-62a4d2dcd9d0"
+          },
+          "name": {
+            "type": "string",
+            "example": "Cool name"
+          },
+          "userId": {
+            "type": "string",
+            "format": "UUID",
+            "example": "42aada1a-d4f5-42b3-a9ba-62a4d2dcd9d0"
+          }
+        },
+        "type": "object",
+        "required": ["name","userId"]
+      },
+      "TestList": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "UUID",
+            "example": "42aada1a-d4f5-42b3-a9ba-62a4d2dcd9d0"
+          },
+          "name": {
+            "type": "string",
+            "example": "Cool name"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name"]
+      },
+      "TestListType": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "UUID",
+            "example": "42aada1a-d4f5-42b3-a9ba-62a4d2dcd9d0"
+          },
+          "name": {
+            "type": "string",
+            "example": "Cool name"
+          },
+          "type": {
+            "type": "string",
+            "example": "sms"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name", "type"]
+      },
+      "Test": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "UUID",
+            "example": "42aada1a-d4f5-42b3-a9ba-62a4d2dcd9d0"
+          },
+          "name": {
+            "type": "string",
+            "example": "Cool name"
+          },
+          "userId": {
+            "type": "string",
+            "format": "UUID",
+            "example": "42aada1a-d4f5-42b3-a9ba-62a4d2dcd9d0"
+          },
+          "type": {
+            "type": "string",
+            "example": "sms"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name", "userId", "type"]
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "totalItems": {
+            "type": "integer",
+            "example": 3
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 3
+          },
+          "itemsPerPage": {
+            "type": "integer",
+            "example": 4
+          }
+        }
+      }
+    },
+    "responses": {
+      "OK": {
+        "description": "OK"
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+          }
+        }
+      },
+      "List": {
+        "description": "List of items",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ListItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ListTestType": {
+        "description": "List of items",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TestListType"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/Pagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ListTest": {
+        "description": "List of items",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TestList"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/Pagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "IndexTest": {
+        "description": "Index items",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Test"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/Pagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ItemTest": {
+        "description": "Item test",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "item": {
+                  "$ref": "#/components/schemas/Test"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Created": {
+        "description": "Created",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "UUID",
+                  "example": "206de425-3298-4dab-b4c9-1e19bfae9ea6"
+                }
+              }
+            }
+          }
+        }
+      },
+      "UnprocessableEntity": {
+        "description": "Unprocessable entity",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "errors"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "errors": {
+                  "additionalProperties": {
+                    "$ref": "#/components/schemas/FormFieldErrors"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Conflict": {
+        "description": "Conflict",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "message"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Conflict"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "name": "Bearer",
+        "in": "header",
+        "description": "Введите токент Enter the token с префиксом `Bearer: `, например: \"Bearer: abcde12345\""
+      }
+    },
+    "parameters": {
+      "ApiVisitorId": {
+        "name": "api-visitorId",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "example": "someVisitorId"
+        }
+      },
+      "ApiOperationId": {
+        "name": "api-operationId",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "example": "someOperationId"
+        }
+      }
+    }
+  }
+}
