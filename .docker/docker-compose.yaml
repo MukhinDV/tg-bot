@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      args:
+        - WITH_XDEBUG=${WITH_XDEBUG:-false}
+      context: .
+    volumes:
+      - ../:/var/www/html
+      - ./xdebug.ini:/etc/php/8.3/mods-available/xdebug.ini
+      - ./000-default.conf:/etc/apache2/sites-available/000-default.conf
+    env_file:
+      ../.env.local
+    ports:
+      - ${APP_PORT_HTTP:-80}:80
+      - ${APP_PORT_HTTPS:-443}:443
+    networks:
+      - local
+    extra_hosts:
+      - host.docker.internal:${HOST_DOCKER_INTERNAL:-127.0.0.1}
+
+  mysql:
+    image: mysql:8.0.25
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-syrniki}
+      - MYSQL_USER=${MYSQL_USER:-syrniki}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-qwerty}
+      - MYSQL_PASSWORD=${MYSQL_ROOT_PASSWORD:-qwerty}
+    healthcheck:
+      test: "/usr/bin/mysql --user=syrniki --password=qwerty --execute \"SHOW DATABASES;\""
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./mounts/mysql:/var/lib/mysql:rw
+    ports:
+      - ${MYSQL_PORT:-3306}:3306
+    networks:
+      - local
+
+  redis:
+    image: redis
+    ports:
+      - ${REDIS_PORT:-6379}:6379
+    networks:
+      - local
+
+networks:
+  local:

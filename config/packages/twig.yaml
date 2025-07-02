@@ -1,0 +1,3 @@
+twig:
+    paths:
+      'bundle/orderBundle/src/Symfony/Resources/templates': order

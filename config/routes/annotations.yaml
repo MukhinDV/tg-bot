@@ -1,0 +1,12 @@
+kernel:
+    resource: ../../src/Kernel.php
+    type: annotation
+
+TelegramBundle:
+    resource: '@TelegramBundle/Resources/config/routes.yaml'
+
+OrderBundle:
+    resource: '@OrderBundle/Resources/config/routes.yaml'
+
+PromotionBundle:
+    resource: '@PromotionBundle/Resources/config/routes.yaml'

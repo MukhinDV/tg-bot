@@ -1,0 +1,28 @@
+services:
+  _defaults:
+    autowire: true
+
+  Syrniki\User\Symfony\Repository\UserRepository: ~
+
+  Syrniki\User\Interfaces\UserRepositoryInterface:
+    alias: Syrniki\User\Symfony\Repository\UserRepository
+
+  telegram.logger:
+    alias: logger
+
+  Syrniki\User\Symfony\EventListener\UserCreateEventListener:
+    tags:
+      - { name: kernel.event_listener, event: Syrniki\Telegram\Event\UserCreateEvent }
+
+  Syrniki\User\Interfaces\UserUpdateServiceInterface:
+    alias: Syrniki\User\Service\UserUpdateService
+
+  Syrniki\User\Service\UserUpdateService: ~
+
+  Syrniki\User\Symfony\Command\SetAdminToUserCommand:
+    tags:
+      - { name: console.command, command: "user:set-admin-to-user" }
+
+  Syrniki\User\Symfony\EventListener\UserAdminEventListener:
+    tags:
+      - { name: kernel.event_listener, event: Syrniki\Telegram\Event\UserAdminEvent, method: checkAdmin }

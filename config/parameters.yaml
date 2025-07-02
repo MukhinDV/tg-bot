@@ -1,0 +1,3 @@
+parameters:
+  redis.host: '%env(REDIS_HOST)%'
+  redis.port: '%env(int:REDIS_PORT)%'

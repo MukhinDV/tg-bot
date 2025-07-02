@@ -1,0 +1,113 @@
+services:
+  _defaults:
+    autowire: true
+
+  Syrniki\Telegram\Transport\GuzzleTransport:
+    arguments:
+      - '%telegram.gateway_url%'
+      - '%telegram.api_key%'
+    calls:
+      - [ 'setLogger', [ '@telegram.logger' ] ]
+
+  Syrniki\Telegram\Interfaces\TelegramClientInterface:
+    alias: Syrniki\Telegram\Client\TelegramClient
+
+  Syrniki\Telegram\Client\TelegramClient:
+    arguments:
+      - '@Syrniki\Telegram\Transport\GuzzleTransport'
+
+  Syrniki\Telegram\Symfony\Controller\TelegramController:
+    tags: [ 'controller.service_arguments' ]
+    arguments:
+      $gatewayUrl: '%telegram.gateway_url%'
+    calls:
+      - [ 'setLogger', [ '@telegram.logger' ] ]
+
+  Syrniki\Telegram\Symfony\Command\SetWebhookCommand:
+    arguments:
+      $domain: '%telegram.domain%'
+      $webhookUrl: '%telegram.webhook_url%'
+    tags:
+      - { name: console.command, command: "telegram:set-webhook" }
+
+  Syrniki\Telegram\Symfony\Command\UnsetWebhookCommand:
+    tags:
+      - { name: console.command, command: "telegram:unset-webhook" }
+
+  Syrniki\Telegram\Symfony\Command\GetWebhookInfoCommand:
+    tags:
+      - { name: console.command, command: "telegram:get-webhook-info" }
+
+  telegram.logger:
+    alias: logger
+
+  Syrniki\Telegram\Interfaces\WebhookInputServiceInterface:
+    alias: Syrniki\Telegram\Service\WebhookInputService
+
+  Syrniki\Telegram\Service\WebhookInputService:
+    calls:
+      - [ 'setLogger', [ '@telegram.logger' ] ]
+
+  Syrniki\Telegram\Command\StartCommand:
+    arguments:
+      $uri: '%telegram.host_url%'
+    tags: [ 'telegram.command_tag' ]
+
+  Syrniki\Telegram\Command\PriceCommand:
+    tags: [ 'telegram.command_tag' ]
+
+  Syrniki\Telegram\Command\DeliveryCommand:
+    tags: [ 'telegram.command_tag' ]
+
+  Syrniki\Telegram\Command\ContactsCommand:
+    tags: [ 'telegram.command_tag' ]
+
+  Syrniki\Telegram\Command\ComboCommand:
+    tags: [ 'telegram.command_tag' ]
+
+  Syrniki\Telegram\Command\DefaultCommand:
+    tags:
+      - { name: 'telegram.command_tag', priority: -1 }
+
+  Syrniki\Telegram\Interfaces\CommandCollectionInterface:
+    alias: Syrniki\Telegram\Collection\CommandCollection
+
+  Syrniki\Telegram\Collection\CommandCollection:
+    arguments:
+      - !tagged_iterator 'telegram.command_tag'
+
+  Syrniki\Telegram\Interfaces\KeyboardInterface:
+    alias: Syrniki\Telegram\KeyBoard\MenuKeyboard
+
+  Syrniki\Telegram\KeyBoard\MenuKeyboard:
+    arguments:
+      - '%telegram.host_url%'
+      - '@telegram.serializer'
+      - '%telegram.domain%'
+
+  telegram.serializer:
+    class: Symfony\Component\Serializer\Serializer
+    arguments:
+      - [ "@telegram.normalizer" ]
+      - [ "@telegram.encoder" ]
+
+  telegram.normalizer:
+    class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+
+  telegram.encoder:
+    class: Symfony\Component\Serializer\Encoder\JsonEncoder
+
+  Syrniki\Telegram\Interfaces\TelegramDataServiceInterface:
+    alias: Syrniki\Telegram\Service\TelegramDataService
+
+  Syrniki\Telegram\Service\TelegramDataService: ~
+
+  Syrniki\Telegram\Command\Admin\ChangeOrderStatusAdminCommand:
+    tags: [ 'telegram.command_tag' ]
+
+  Syrniki\Telegram\Command\Admin\FindOrdersByStatusAdminCommand:
+    tags: [ 'telegram.command_tag' ]
+
+  Syrniki\Telegram\Command\Admin\FindUnFinishedOrdersAdminCommand:
+    tags: [ 'telegram.command_tag' ]
+

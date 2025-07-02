@@ -1,0 +1,8 @@
+parameters:
+  telegram.api_key: '%env(TELEGRAM_API_KEY)%'
+  telegram.bot_user_name: '%env(TELEGRAM_BOT_USER_NAME)%'
+  telegram.domain: '%env(TELEGRAM_DOMAIN)%'
+  telegram.host_url: '%env(TELEGRAM_HOST_URL)%'
+  telegram.gateway_url: '%env(TELEGRAM_GATEWAY_URL)%'
+  telegram.webhook_url: '/telegram/webhook'
+
